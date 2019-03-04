@@ -1,0 +1,160 @@
+@charset "utf-8";
+
+/*普通变量与默认变量*/
+
+$fontSize: 14px;
+$fontSize:12px !default;
+body {
+    font-size: $fontSize;
+}
+
+
+/*局部变量和全局变量*/
+
+$color: orange !default; //定义全局变量(在选择器、函数、混合宏...的外面定义的变量为全局变量)
+.block {
+    color: $color; //调用全局变量
+}
+
+em {
+    $color: red; //定义局部变量
+    a {
+        color: $color; //调用局部变量
+    }
+}
+
+span {
+    color: $color; //调用全局变量
+}
+
+
+/* 选择器嵌套*/
+
+nav {
+    a {
+        color: red;
+        .b {
+            & .c {
+                font-size: 12px;
+            }
+        }
+        head & {
+            color: green;
+        }
+    }
+}
+
+
+/* 属性嵌套*/
+
+.box {
+    font: {
+        size: 12px;
+        weight: bold;
+    }
+}
+
+
+/* 伪类嵌套*/
+
+.box {
+    &:before {
+        content: '伪元素嵌套';
+    }
+}
+
+// #main {
+//     color: #fff;
+//     background-color: #000;
+//     p {
+//         width: 10em;
+//     }
+// }
+// $blue: #1875e7;
+// div {
+//     color: $blue;
+// }
+// $side: left;
+// .rounded {
+//     border-#{$side}-radius: 5px;
+// }
+// body {
+//     margin: (14px/2);
+//     top: 50px + 100px;
+//     right: $var * 10%;
+// }
+// div h1 {
+//     color: red;
+// }
+// div {
+//     hi {
+//         color: red;
+//     }
+// }
+// .class1 {
+//     border: 1px solid #ddd;
+// }
+// .class2 {
+//     @extend .class1;
+//     font-size: 120%;
+// }
+// @mixin left {
+//     float: left;
+//     margin-left: 10px;
+// }
+// div {
+//     @include left;
+// }
+// @mixin left($value: 10px) {
+//     float: left;
+//     margin-right: $value;
+// }
+// div {
+//     @include left(20px);
+// }
+// @mixin rounded($vert, $horz, $radius: 10px) {
+//     border-#{$vert}-#{$horz}-radius: $radius;
+//     -moz-border-radius-#{$vert}#{$horz}: $radius;
+//     -webkit-border-#{$vert}-#{$horz}-radius: $radius;
+// }
+// #navbar li {
+//     @include rounded(top, left);
+// }
+// #footer {
+//     @include rounded(top, left, 5px);
+// }
+// lighten(#cc3, 10%) // #d6d65c
+// darken(#cc3, 10%) // #a3a329
+// grayscale(#cc3) // #808080
+// complement(#cc3) // #33c
+// @if lightness($color)>30% {
+//     background-color: #000;
+// }
+// @else {
+//     background-color: #fff;
+// }
+// @for $i from 1 to 10 {
+//     .border-#{$i} {
+//         border: #{$i}px solid blue;
+//     }
+// }
+// $i: 6;
+// @while $i>0 {
+//     .item-#{$i} {
+//         width: 2em * $i;
+//     }
+//     $i: $i - 2;
+// }
+// @each $member in a,
+// b,
+// c,
+// d {
+//     .#{$member} {
+//         background-image: url("/image/#{$member}.jpg");
+//     }
+// }
+// @function double($n) {
+//     @return $n * 2;
+// }
+// #sidebar {
+//     width: double(5px);

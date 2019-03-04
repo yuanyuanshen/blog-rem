@@ -1,0 +1,29 @@
+@charset "UTF-8";
+/*普通变量与默认变量*/
+body {
+  font-size: 14px; }
+
+/*局部变量和全局变量*/
+.block {
+  color: orange; }
+
+em a {
+  color: red; }
+
+span {
+  color: orange; }
+
+/* 选择器嵌套*/
+nav a {
+  color: red; }
+  nav a .b .c {
+    font-size: 12px; }
+  head nav a {
+    color: green; }
+
+/* 属性嵌套*/
+.box {
+  font-size: 12px;
+  font-weight: bold; }
+
+/*# sourceMappingURL=test-t.css.map */
