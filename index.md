@@ -68,6 +68,8 @@ body {
 
 ---
 
+## II. SASS 的使用
+
 ### 安装方法
 
 ```javascript
@@ -121,7 +123,43 @@ sass --watch app/sass:public/stylesheets // watch a directory
 
 ### 基本用法
 
-**1.变量**
+**1.数据类型**
+
+Sass 和 JavaScript 语言类似，也具有自己的数据类型，在 Sass 中包含以下几种数据类型：
+
+- 数字: 如，1、 2、 13、 10px；
+- 字符串：有引号字符串或无引号字符串，如，"foo"、 'bar'、 baz；
+- 颜色：如，blue、 #04a3f9、 rgba(255,0,0,0.5)；
+- 布尔型：如，true、 false；
+- 空值：如，null；
+- 值列表：用空格或者逗号分开，如，1.5em 1em 0 2em 、 Helvetica, Arial, sans-serif。
+
+_<h4>字符串</h4>_
+
+- 有引号字符串 (quoted strings)，如 "Lucida Grande" 、'http://sass-lang.com'；
+- 无引号字符串 (unquoted strings)，如 sans-serifbold。
+
+使用 #{ }插值语句 (interpolation) 时，有引号字符串将被编译为无引号字符串，这样方便了在混合指令 (mixin) 中引用选择器名。
+
+---
+
+```scss
+@mixin firefox-message($selector) {
+  body.firefox #{$selector}:before {
+    content: 'Hi, Firefox users!';
+  }
+}
+```
+
+```scss
+body.firefox .header:before {
+  content: 'Hi, Firefox users!';
+}
+```
+
+---
+
+**2.变量**
 
 SASS 允许使用变量，所有变量以\$开头。
 
@@ -141,7 +179,7 @@ $side: left;
 }
 ```
 
-**普通变量和默认变量**
+_<h4>普通变量和默认变量</h4>_
 
 sass 的默认变量一般是用来设置默认值，然后根据需求来覆盖的，覆盖的方式也很简单，只需要在默认变量之前重新声明下变量即可。
 
@@ -161,7 +199,7 @@ body {
 }
 ```
 
-**局部变量和全局变量**
+_<h4>局部变量和全局变量</h4>_
 
 从 3.4 版本开始，Sass 已经可以正确处理作用域的概念
 
@@ -197,13 +235,13 @@ span {
 }
 ```
 
-**全局变量的影子**
+_<h4>全局变量的影子</h4>_
 
 当在局部范围（选择器内、函数内、混合宏内...）声明一个已经存在于全局范围内的变量时，局部变量就成为了全局变量的影子。基本上，局部变量只会在局部范围内覆盖全局变量。
 
 同上一个例子
 
-**什么时候声明变量？**
+_<h4>什么时候声明变量？</h4>_
 
 1. 该值至少重复出现了两次；
 2. 该值至少可能会被更新一次；
@@ -215,17 +253,133 @@ span {
 
 ### 基本用法
 
-**2.计算功能**
+**3.计算功能**
+
+_<h5>加减乘除都不允许不同单位进行运算</h5>_
 
 ```scss
 body {
   margin: (14px/2);
   top: 50px + 100px;
-  right: $var * 10%;
 }
 ```
 
-**3.嵌套**
+_<h4>加法 + 减法</h4>_
+
+携带不同类型的单位时，在 Sass 中计算会报错
+
+```scss
+.box {
+  width: 20px + 1em;
+}
+
+$full-width: 960px;
+
+.content {
+  width: $full-width - 1em;
+}
+// Incompatible units: 'em' and ‘px'.”
+```
+
+---
+
+_<h4>乘法</h4>_
+
+能够支持多种单位（比如 em ,px , %）
+
+乘法运算时，两个值单位相同时，只需要为一个数值提供单位即可
+
+```scss
+.box {
+  width: 10px * 2;
+  // width: 10px * 2px 错误;
+}
+```
+
+_<h4>除法</h4>_
+
+在 Sass 中做除法运算时，直接使用“/”符号做为除号时，将不会生效，编译时既得不到我们需要的效果，也不会报错。
+
+这样的结果对于大家来说没有任何意义。要修正这个问题，只需要给运算的外面添加一个小括号()
+
+'/' 符号被当作除法运算符时有以下几种情况：
+
+- 如果数值或它的任意部分是存储在一个变量中或是函数的返回值。
+- 如果数值被圆括号包围。
+- 如果数值是另一个数学表达式的一部分。
+
+---
+
+```scss
+p {
+  font: 10px/8px; // 纯 CSS，不是除法运算
+  height: (16px/8px);
+  $width: 1000px;
+  width: $width/2; // 使用了变量，是除法运算
+  width: round(1.5) / 2; // 使用了函数，是除法运算
+  height: (500px/2); // 使用了圆括号，是除法运算
+  margin-left: 5px + 8px/2px; // 使用了加（+）号，是除法运算
+}
+```
+
+```scss
+p {
+  font: 10px/8px;
+  height: 2;
+  width: 500px;
+  width: 1;
+  height: 250px;
+  margin-left: 9px;
+}
+```
+
+<h5>除法运算时，如果两个值带有相同的单位值时，除法运算之后会得到一个不带单位的数值。</h5>
+
+_<h4>颜色运算</h4>_
+
+所有算数运算都支持颜色值，并且是分段运算的。也就是说，红、绿和蓝各颜色分段单独进行运算。
+
+---
+
+```scss
+p {
+  color: #010203 + #040506; // 01+04 02+05 03+06
+  // 考虑颜色函数 未来版本不支持
+}
+```
+
+_<h4>字符运算</h4>_
+
+在 Sass 中可以通过加法符号“+”来对字符串进行连接。可以连接变量和和字符
+
+```scss
+$content: 'Hello' + '' + 'Sass!';
+.box:before {
+  content: ' #{$content} ';
+}
+
+div {
+  cursor: 'e' + -resize;
+  position: re + 'lative';
+}
+```
+
+```scss
+.box:before {
+  content: ' HelloSass! ';
+}
+
+div {
+  cursor: 'e-resize';
+  position: relative;
+}
+```
+
+---
+
+### 基本用法
+
+**4.嵌套**
 
 ```scss
 div {
@@ -235,12 +389,11 @@ div {
 }
 ```
 
-**选择器嵌套**
+sass 的嵌套分为 3 种：选择器嵌套、属性嵌套、伪类嵌套
 
-&有 2 种用法：
+_<h4>选择器嵌套</h4>_
 
-1. 替换空格
-2. 选择父类
+& 有 2 种用法：1.替换空格 2.选择父类
 
 ---
 
@@ -280,7 +433,7 @@ head nav a {
 
 ---
 
-**属性嵌套**
+_<h4>属性嵌套</h4>_
 
 CSS 有一些属性前缀相同，只是后缀不一样，比如：border-top/border-right，与这个类似的还有 margin、padding、font 等属性。
 
@@ -300,7 +453,7 @@ CSS 有一些属性前缀相同，只是后缀不一样，比如：border-top/bo
 }
 ```
 
-**伪类嵌套**
+_<h4>伪类嵌套</h4>_
 
 ```scss
 .box {
@@ -316,7 +469,7 @@ CSS 有一些属性前缀相同，只是后缀不一样，比如：border-top/bo
 
 ### 基本用法
 
-**4.注释**
+**5.注释**
 
 SASS 共有两种注释风格。
 
@@ -335,17 +488,50 @@ SASS 共有两种注释风格。
 SASS 允许一个选择器，继承另一个选择器。比如，现有 class1：
 
 ```scss
-.class1 {
-  border: 1px solid #ddd;
+.btn {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  font-size: 14px;
 }
 ```
 
-class2 要继承 class1，就要使用@extend 命令：
+要继承 .btn，就要使用@extend 命令：
 
 ```scss
-.class2 {
-  @extend .class1;
-  font-size: 120%;
+.btn-primary {
+  background-color: #f36;
+  color: #fff;
+  @extend .btn;
+}
+
+.btn-default {
+  background-color: orange;
+  color: #fff;
+  @extend .btn;
+}
+```
+
+---
+
+编译出来的 CSS 会将选择器合并在一起，形成组合选择器：
+
+```scss
+.btn,
+.btn-primary,
+.btn-default {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: #f36;
+  color: #fff;
+}
+
+.btn-default {
+  background-color: orange;
+  color: #fff;
 }
 ```
 
@@ -353,9 +539,9 @@ class2 要继承 class1，就要使用@extend 命令：
 
 ### css 代码的重用
 
-**2.Mixin**
+**2.Mixin(混合宏)**
 
-使用@mixin 命令，定义一个代码块。
+需要重复使用大段的样式时，使用变量就无法达到我们目目的，这时候可以使用@mixin，定义一个代码块。
 
 ```scss
 @mixin left {
@@ -372,19 +558,6 @@ div {
 }
 ```
 
-mixin 的强大之处，在于可以指定参数和缺省值。
-
-```scss
-@mixin left($value: 10px) {
-  float: left;
-  margin-right: $value;
-}
-```
-
----
-
-### css 代码的重用
-
 使用的时候，根据需要加入参数：
 
 ```scss
@@ -393,9 +566,12 @@ div {
 }
 ```
 
+---
+
 下面是一个 mixin 的实例，用来生成浏览器前缀。
 
 ```scss
+// 在属性中取值需要使用 #{}
 @mixin rounded($vert, $horz, $radius: 10px) {
   border-#{$vert}-#{$horz}-radius: $radius;
   -moz-border-radius-#{$vert}#{$horz}: $radius;
@@ -411,20 +587,225 @@ div {
 }
 ```
 
+mixin 的强大之处，在于可以指定参数和缺省值。
+
+```scss
+@mixin left($value: 10px) {
+  float: left;
+  margin-right: $value;
+}
+```
+
+---
+
+混合宏除了能传一个参数之外，还可以传多个参数
+
+```scss
+@mixin center($width, $height) {
+  width: $width;
+  height: $height;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -($height) / 2;
+  margin-left: -($width) / 2;
+}
+.box-center {
+  @include center(500px, 300px);
+}
+```
+
+```scss
+.box-center {
+  width: 500px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -150px;
+  margin-left: -250px;
+}
+```
+
+---
+
+有一个特别的参数“…”。当混合宏传的参数过多之时，可以使用参数来替代，如：
+
+```scss
+@mixin box-shadow($shadows...) {
+  @if length($shadows) >= 1 {
+    -webkit-box-shadow: $shadows;
+    box-shadow: $shadows;
+  } @else {
+    $shadows: 0 0 2px rgba(#000, 0.25);
+    -webkit-box-shadow: $shadow;
+    box-shadow: $shadow;
+  }
+}
+.box {
+  @include box-shadow(0 0 1px rgba(#000, 0.5), 0 0 2px rgba(#000, 0.2));
+}
+
+.box1 {
+  @include box-shadow();
+}
+```
+
+```scss
+.box {
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.box1 {
+  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.25);
+}
+```
+
+---
+
+_<h4>混合宏的不足</h4>_
+
+混合宏在实际编码中给我们带来很多方便之处，特别是对于复用重复代码块。但其最大的不足之处是会生成冗余的代码块。比如在不同的地方调用一个相同的混合宏时。
+
+```scss
+@mixin border-radius {
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.box {
+  @include border-radius;
+  margin-bottom: 5px;
+}
+.btn {
+  @include border-radius;
+}
+```
+
+```scss
+.box {
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  margin-bottom: 5px;
+}
+.btn {
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+```
+
+并不能智能的将相同的样式代码块合并在一起。这也是 Sass 的混合宏最不足之处。
+
 ---
 
 ### css 代码的重用
 
-**3.颜色函数**
+**3.占位符%placeholder**
 
-SASS 提供了一些内置的颜色函数，以便生成系列颜色。
+他可以取代以前 CSS 中的基类造成的代码冗余的情形。因为 %placeholder 声明的代码，如果不被 @extend 调用的话，不会产生任何代码。
 
 ```scss
-lighten(#cc3, 10%) // #d6d65c
-darken(#cc3, 10%) // #a3a329
-grayscale(#cc3) // #808080
-complement(#cc3) // #33c
+%mt5 {
+  // 没有被@extent调用就不会被编译到css中
+  margin-top: 5px;
+}
+%pt5 {
+  padding-top: 5px;
+}
+
+.btn {
+  @extend %mt5;
+  @extend %pt5;
+}
 ```
+
+通过 @extend 调用的占位符，编译出来的代码会将相同的代码合并在一起。
+
+---
+
+_<h4>混合宏 VS 继承 VS 占位符</h4>_
+
+<img src="./sass_reuse.jpg" />
+
+---
+
+### css 代码的重用
+
+**[3.函数](https://sass-lang.com/documentation/Sass/Script/Functions.html)**
+
+自备了一系列的函数功能。其主要包括：
+
+- 字符串函数
+- 数字函数
+- 列表函数
+- 颜色函数
+- Introspection 函数
+- 三元函数等
+
+_<h4>字符串函数</h4>_
+
+unquote(\$string) : Removes quotes from a string.
+
+quote(\$string) : Adds quotes to a string.
+
+to-lower-case(\$string) : Converts a string to lower case.
+
+---
+
+_<h4>数字函数</h4>_
+
+round(\$number) : Rounds a number to the nearest whole number.
+
+ceil(\$number) : Rounds a number up to the next whole number.
+
+floor(\$number) : Rounds a number down to the previous whole number.
+
+_<h4>列表函数</h4>_
+
+join($list1, $list2, [$separator, $bracketed]) : Joins together two lists into one.
+
+append($list1, $val, [$separator]) : Appends a single value onto the end of a list.
+
+_<h4>Map 函数</h4>_
+
+map-keys(\$map) : Returns a list of all keys in a map.
+
+map-values(\$map) : Returns a list of all values in a map.
+
+map-has-key($map, $key) : Returns whether a map has a value associated with a given key.
+
+_<h4>颜色函数</h4>_
+
+---
+
+```scss
+.test {
+  text: to-upper-case(aaaaa);
+  text: to-lower-case(aA-aAAA-aaa);
+}
+
+.footer {
+  width: round(12.3px);
+}
+
+.footer1 {
+  width: index(1px solid red, red);
+}
+
+$social-colors: (
+  dribble: #ea4c89,
+  facebook: #3b5998,
+  github: #171515,
+  google: #db4437,
+  twitter: #55acee
+);
+.btn-dribble {
+  color: map-get($social-colors, facebook);
+}
+```
+
+---
 
 **4.插入文件**
 
@@ -454,15 +835,79 @@ complement(#cc3) // #33c
 }
 ```
 
+---
+
 **2.循环语句**
 
+_<h4>for 循环</h4>_
+
+**@for** $i **from** start **through** end || **@for** $i **from** start **to** end
+
+区别是关键字 through 表示包括 end 这个数，而 to 则不包括 end 这个数。
+
 ```scss
-@for $i from 1 to 10 {
+@for $i from 1 to 3 {
+  .border-#{$i} {
+    border: #{$i}px solid blue;
+  }
+}
+@for $i from 1 through 3 {
   .border-#{$i} {
     border: #{$i}px solid blue;
   }
 }
 ```
+
+---
+
+```scss
+.border-1 {
+  border: 1px solid blue;
+}
+
+.border-2 {
+  border: 2px solid blue;
+}
+
+.border-1 {
+  border: 1px solid blue;
+}
+
+.border-2 {
+  border: 2px solid blue;
+}
+
+.border-3 {
+  border: 3px solid blue;
+}
+```
+
+---
+
+@for 应用在网格系统生成各个格子 class 的代码：
+
+```scss
+//SCSS
+$grid-prefix: span !default;
+$grid-width: 60px !default;
+$grid-gutter: 20px !default;
+
+%grid {
+  float: left;
+  margin-left: $grid-gutter / 2;
+  margin-right: $grid-gutter / 2;
+}
+@for $i from 1 through 12 {
+  .#{$grid-prefix}#{$i} {
+    width: $grid-width * $i + $grid-gutter * ($i - 1);
+    @extend %grid;
+  }
+}
+```
+
+---
+
+_<h4>while 循环</h4>_
 
 ```scss
 $i: 6;
@@ -474,17 +919,45 @@ $i: 6;
 }
 ```
 
+```scss
+.item-6 {
+  width: 12em;
+}
+
+.item-4 {
+  width: 8em;
+}
+
+.item-2 {
+  width: 4em;
+}
+```
+
+---
+
+_<h4>each 循环</h4>_
+
+@each 循环就是去遍历一个列表，然后从列表中取出对应的值。
+
+```scss
+$list: adam john wynn mason kuroir; //$list 就是一个列表
+
+@mixin author-images {
+  @each $author in $list {
+    .photo-#{$author} {
+      background: url('/images/avatars/#{$author}.png') no-repeat;
+    }
+  }
+}
+
+.author-bio {
+  @include author-images;
+}
+```
+
 ---
 
 ### sass 高级用法
-
-```scss
-@each $member in a, b, c, d {
-  .#{$member} {
-    background-image: url('/image/#{$member}.jpg');
-  }
-}
-```
 
 **3.自定义函数**
 
@@ -502,471 +975,160 @@ SASS 允许用户编写自己的函数。
 
 ---
 
-## II. SASS 总结
+## II. SASS @规则
 
-<img src="./all.jpg" />
+_<h4>@media</h4>_
 
----
+Sass 中的 @media 指令和 CSS 的使用规则一样的简单，但它有另外一个功能，可以嵌套在 CSS 规则中。有点类似 JS 的冒泡功能一样，如果在样式中使用 @media 指令，它将冒泡到外面。来看一个简单示例：
 
-### path 路径操作模块
-
-```javascript
-
-path.join(__dirname, '../node_modules')
-
-path.basename(path[, ext])
-
-```
-
-<img src="http://img2.ph.126.net/MgfYCwnWSkO7q2EID4It3w==/6599300675751393002.png" />
-
----
-
-### node 中的其他成员
-
-在每个模块中，除了 require、export 等模块相关的 API 之外，还有两个特殊的成员
-
-- \_\_dirname 可以用来获取当前文件模块所属目录的绝对路径 **动态获取**
-- \_\_filename 可以用来获取当前文件的绝对路径 **动态获取**
-
-**1. 在文件操作路径中，相对路径设计的是相对于执行 node 命令所在路径**
-**2. 模块中的路径标识就是相对于当前文件模块，不受执行 node 命令所处路径影响**
-
-```javascript
-const fs = require('fs')
-const path = require('path')
-
-// 文件操作中的相对路径
-fs.readFile('c:/a/b/a.txt', 'utf-8', function(err, data) {
-  if (err) throw err
-  console.log(data)
-})
-
-// 文件操作中的相对路径转化为动态获取的绝对路径
-fs.readFile(path.join(__dirname, './a.txt'), 'utf-8', function(err, data) {})
-
-// 模块中的路径标识
-require('./b')
-```
-
----
-
-## II. Express 中间件
-
-**中间件（middleware）** 在 Node.js 中被广泛使用，它泛指一种特定的设计模式、一系列的处理单元、过滤器和处理程序，以函数的形式存在，连接在一起，形成一个异步队列，来完成对任何数据的预处理和后处理。
-
-常规的中间件模式
-
-<img src="https://upload-images.jianshu.io/upload_images/5236403-89a09dec2d661faa.jpg?imageMogr2/auto-orient/" />
-
----
-
-### express 中间件
-
-[express 中间件](http://www.expressjs.com.cn/guide/writing-middleware.html)
-
-**Middleware functions are functions** that have access to the request object (req), the response object (res), and the next function in the application’s request-response cycle.
-
-中间件的本质就是请求处理方法，把用户从请求到响应的整个过程分发到多个中间件中去处理，提高代码灵活性，动态可扩展
-
-<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542863886302&di=8c2650a2389ce7e21e5afcf63739266a&imgtype=0&src=http%3A%2F%2Fresupload.xueda.com%2Fupload%2F55ee1c9f-971f-4e88-a708-666a1459c388%2FkX159dhLPTXl.gif" />
-
----
-
-### 中间件的使用
-
-```js
-var express = require('express')
-var app = express()
-var myLogger = function(req, res, next) {
-  console.log('LOGGED')
-  next()
-  console.log('After LOGGED')
+```scss
+.sidebar {
+  width: 300px;
+  @media screen and (orientation: landscape) {
+    width: 500px;
+  }
 }
-var myLogger2 = function(req, res, next) {
-  console.log('LOGGED2')
-  next()
-  console.log('After LOGGED2')
-}
-app.use(myLogger)
-app.use(myLogger2)
-app.listen(3000, function() {
-  console.log('express app is runing .....')
-})
 ```
 
-project:demo-3.js 运行结果如下：
-<img src="http://img0.ph.126.net/RJXU-zBFcnMXnpD_lV9q2Q==/6597876808193903130.png" />
+```scss
+.sidebar {
+  width: 300px;
+}
+@media screen and (orientation: landscape) {
+  .sidebar {
+    width: 500px;
+  }
+}
+```
 
 ---
 
-### 实现中间件机制
+_<h4>@at-root</h4>_
 
-```js
-function express() {
-  var taskArrray = []
-  var app = function(req, res) {
-    var i = 0
-    function next() {
-      var task = taskArrray[i++]
-      if (!task) {
-        return
+@at-root 从字面上解释就是跳出根元素。
+
+```scss
+.a {
+  color: red;
+
+  .b {
+    color: orange;
+
+    .c {
+      color: yellow;
+
+      @at-root .d {
+        color: green;
       }
-      task(req, res, next)
     }
-    next()
   }
-  // 将中间件存入数组中
-  app.use = function(task) {
-    taskArrray.push(task)
-  }
-
-  return app
 }
 ```
 
-project:demo-4.js
-
----
-
-### 实现中间件机制测试结果
-
-```js
-var http = require('http')
-var app = express()
-http.createServer(app).listen('3000', function() {
-  console.log('listening 3000....')
-})
-var myLogger = function(req, res, next) {
-  console.log('LOGGED')
-  next()
-  console.log('After LOGGED')
+```scss
+.a {
+  color: red;
 }
-var myLogger2 = function(req, res, next) {
-  console.log('LOGGED2')
-  next()
-  console.log('After LOGGED2')
+.a .b {
+  color: orange;
 }
-app.use(myLogger)
-app.use(myLogger2)
+.a .b .c {
+  color: yellow;
+}
+.d {
+  color: green;
+}
 ```
 
-<img src="http://img0.ph.126.net/RJXU-zBFcnMXnpD_lV9q2Q==/6597876808193903130.png" />
-
 ---
 
-### express 中间件分类
+_<h4>@debug</h4>_
 
-应用层级别中间件
+@debug 在 Sass 中是用来调试的，@debug 指令之后，在命令终端会输出你设置的提示 DEBUG:
 
-- 不关心请求路径和请求方法的中间件，任何请求都会执行
-- 关心请求路径的中间件
+_<h4>@warn</h4>_
 
-路由级别中间件
-
-- 不关心请求路径和请求方法的中间件，任何请求都会执行
-- 严格匹配请求方法和请求路径的中间件
-
-错误处理中间件
-
-- 404 页面 全局错误页面
-
-内置中间件
-
-- express.static
-
-第三方中间件
-
-- body-parser
-- cookie-session
-
----
-
-### 使用 express 中间件
-
-project:demo-5.js
-
-```js
-// 不关心请求路径和请求方法的中间件
-app.use(function(req, res, next) {
-  console.log('all request must execute!!')
-  next()
-})
-
-app.use(function(req, res, next) {
-  console.log('all request must execute 1 !!')
-})
-
-// 以/XXX 开头的路径的中间件
-app.use(
-  '/user/:id',
-  function(req, res, next) {
-    console.log('Request URL:', req.originalUrl)
-    next()
-  },
-  function(req, res, next) {
-    console.log('Request Type:', req.method)
-    next()
+```scss
+@mixin error($x) {
+  @if $x < 10 {
+    width: $x * 10px;
+  } @else if $x == 10 {
+    width: $x;
+  } @else {
+    @warn "你需要将#{$x}值设置在10以内的数";
   }
-)
+}
 
-// 严格匹配请求方法和请求路径的中间件
-app.get('/aa/bb', function(req, res, next) {
-  console.log('/aa/bb')
-  next()
-})
+.test {
+  @include error(15);
+}
 ```
 
 ---
 
-### 使用 express 中间件
+_<h4>@error</h4>_
 
-```js
-// 内置中间件
-app.use('/public/', express.static('./public/'))
-
-// 所有都匹配不到时 404 （放在最后）
-app.use('/', router)
-app.use(function(req, res, next) {
-  res.send('This is 404 !!!!!')
-})
-
-// 配置全局错误统一处理中间件
-app.get('/aa/bb', function(req, res, next) {
-  fs.readFile('c:/a/b/index.js', 'utf-8', function(err) {
-    if (err) return next(err)
-  })
-})
-
-app.use(function(err, req, res, next) {
-  res.status(500).json({
-    err_code: 500,
-    err_msg: err.message
-  })
-})
-
-// 第三方级别中间件
-const bodyParser = require('body-parser')
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-```
-
----
-
-## III. Express Generator
-
-通过应用生成器工具 express-generator 可以快速创建一个应用的骨架。
-
-```js
-npm install express-generator -g
-express myapp --view=pug
-cd myapp
-npm install
-npm run start
-```
-
-project:myapp 访问http://localhost:3000/
-
-<img src="http://img2.ph.126.net/Hdg8CXBpOvwG52ZdpMsIEA==/3906028251914327954.png" />
-
----
-
-### 目录结构与代码
-
-1.查看 myapp 目录结构
-
-2.结合中间件分析代码
-
-project: myapp
-
-<img src="http://img1.ph.126.net/KyJ0a3B5-ffQ0Zwwz01IdA==/6608267193075868969.png" height="580px" style="margin-left:400px;margin-top:-160px"/>
-
----
-
-### 相关中间件
-
-**morgan**
-
-> HTTP request logger middleware for node.js
-
-**pug**
-
-> Pug is a high performance template engine heavily influenced by Haml and implemented with JavaScript for Node.js and browsers. For bug reports, feature requests and questions, open an issue. For discussion join the chat room.
-
-```html
-h1 Pug - node template engine
-<h1>Pug - node template engine</h1>
-```
-
-```js
-// compile
-var fn = pug.compile('string of pug', options)
-var html = fn(locals)
-
-// render
-var html = pug.render('string of pug', merge(options, locals))
-```
-
----
-
-## IV. express 在 vue 项目中模拟接口
-
-结合 ccs-operation-web 中 模拟接口 ./api/server.js
-
-<img src="http://img1.ph.126.net/WcCZiUNffqFb30aEx8pjJA==/6597292967519440276.png" />
-
-project:app.js
-
----
-
-<img src="http://img2.ph.126.net/ODW9rXWQplDwWdDVP0j9zg==/6632632370747397731.png" />
-<img src="http://img1.ph.126.net/BPnIoG4SXbCfleZuOFqm2g==/295830200623422751.png" />
-
----
-
-### 运行 express 服务器
-
-```js
-"scripts": {
-    "server": "nodemon api/server.js",
-    "dev": "webpack-dev-server --inline --progress --open --config build/webpack.dev.conf.js",
-    // 影响ccs-operation-web/config/proxyConfig.js http://localhost:3002/api/listContracts?pin=X&all=X
-    "devlocal": "shell-exec --colored-output \"npm run dev --local\" \"npm run server\"",
+```scss
+@mixin error($x) {
+  @if $x < 10 {
+    width: $x * 10px;
+  } @else if $x == 10 {
+    width: $x;
+  } @else {
+    @error "你需要将#{$x}值设置在10以内的数";
   }
+}
 
-```
-
-**shell-executor**
-
-> A small nodejs module to execute shell commands in parallel
-
-```js
-npm i -g shell-executor
-// --colored-output  Use colored output in logs
-shell-exec --colored-output 'npm run lint' 'npm run test' 'npm run watch'
-
+.test {
+  @include error(15);
+}
 ```
 
 ---
 
-### ccs-operation-web ./api/server.js
+## III. vue 中引入 sass
+
+- 安装相关依赖包
 
 ```js
-const express = require('express')
-const bodyParser = require('body-parser')
-const request = require('request')
-const path = require('path')
-const walk = require('klaw-sync')
-
-const {
-  origin_proxy_url,
-  local_proxy_port,
-  local_proxy_url
-} = require('../config/proxyConfig')
-
-const app = express()
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  )
-  next()
-})
-
-let _existRoutes = []
+npm install --save-dev sass-loader
+//sass-loader依赖于node-sass
+npm install --save-dev node-sass
 ```
 
----
+- 在 build 文件夹下的 webpack.base.conf.js 的 rules 里面添加配置
 
-```js
-app.use((req, res, next) => {
-  const { url, body, method } = req
-  if (!~_existRoutes.indexOf(req.path)) {
-    const rurl = origin_proxy_url.replace(/\/$/, '') + url
-    let r =
-      method === 'POST'
-        ? request.post({ url: rurl, form: body }, (err, httpRes, reqBody) => {
-            console.log(err, reqBody, body)
-          })
-        : request(rurl)
-    console.log(`本地未定义的请求，跳转到 ${method} ${rurl}`)
-    req.pipe(r).pipe(res)
-    return
-  }
-  next()
-})
-
-//遍历本目录下的 *.api.js
-walk(path.resolve('./'))
-  .filter(p => /\.api\.js$/.test(p.path))
-  .map(p => p.path)
-  .forEach(part => require(part)(app))
-
-//记录注册过的路由
-_existRoutes = app._router.stack.filter(s => s.route).map(s => s.route.path)
-
-app.listen(local_proxy_port, () => {
-  console.log(`\n\n local server running at ${local_proxy_url} \n\n`)
-})
+```json
+{
+  "test": /\.sass$/,
+  "loaders": ["style", "css", "sass"]
+}
 ```
 
----
+- 在\*.vue 中修改 style 标签
 
-### klaw-sync
-
-> klaw-sync is a Node.js recursive and fast file system walker
-
-```js
-// 用法
-const klawSync = require('klaw-sync')
-const paths = klawSync('/some/dir')
-// paths = [{path: '/some/dir/dir1', stats: {}}, {path: '/some/dir/file1', stats: {}}]
+```scss
+<style lang="scss">
 ```
-
-<img src="http://img1.ph.126.net/O9u0y_p_bozsoAXriKSPNQ==/1813261800070591348.png" />
-
----
-
-### request
-
-> Request - Simplified HTTP client
-
-```js
-// 用法
-npm install request
-
-var request = require('request');
-request('http://www.google.com', function (error, response, body) {
-  console.log('error:', error);
-  console.log('statusCode:', response && response.statusCode);
-  console.log('body:', body);
-});
-
-req.pipe(request('http://mysite.com/doodle.png')).pipe(resp)
-
-```
-
-<img src="http://img1.ph.126.net/B5PvG3HL_10m5apiaz5EpA==/2114158550174263057.png" />
 
 ---
 
 ## VI. 总结
 
-express 基于 Node.js 平台，快速、开放、极简的 Web 开发框架
+介绍 SASS
 
-简单来说，封装了 node 中 http 核心模块，专注于业务逻辑的开发。
+Sass 和 Scss 区别
 
-express 核心内容 ： 理解、使用中间件
+编译风格
 
-[express 源码学习 路由](https://segmentfault.com/a/1190000013953688)
-[express 中间件原理](https://www.jianshu.com/p/797a4e38fe77)
+基本用法：数据类型、变量、计算功能、嵌套、注释
 
----
+代码重用：继承、混合宏、占位符、函数、文件插入
 
-## 彩蛋
+高级用用：条件语句、循环、自定义函数
 
-<img src="http://img2.ph.126.net/jfrREeUSq5f6Ca0PW9Qxlg==/1873215970110266009.png" />
-<img src="http://img1.ph.126.net/x9chnH2wC_N_IpljI8dKuA==/6597600830775339664.png" />
+sass@规则：media、at-root、debug、warn、error
+
+vue 中使用 sass
+
+<center>-- End --</center>
