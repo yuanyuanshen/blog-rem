@@ -1,41 +1,83 @@
-- [SASS 官网（中文）](http://sass.bootcss.com/)
-- [SASS 官网（英文）](http://sass-lang.com/)
+## 移动端 Web 页面适配方案
 
-<br/>
+移动端 Web 页面，即常说的 H5 页面、手机页面、webview 页面等。
 
-<img src="http://sass.bootcss.com/assets/img/logo.png" height="180"/>
+机设备屏幕尺寸不一，做移动端的 Web 页面，需要考虑在安卓/IOS 的各种尺寸设备上的兼容，这里总结的是针对移动端设备的页面，设计与前端实现怎样做能更好地适配不同屏幕宽度的移动设备。
 
-**SASS 是什么**
+**适配的目标**
 
-> Sass is the most mature, stable, and powerful professional grade CSS extension language in the world.
-
-Sass 是成熟、稳定、强大的 CSS 扩展语言。
-
-**SASS 的特点**
-
-兼容 CSS 语法、功能丰富、成熟
+> 在不同尺寸的手机设备上，页面“相对性的达到合理的展示（自适应）”或者“保持统一效果的等比缩放（看起来差不多）”。
 
 ---
 
 <!-- markdown-to-slides index.md -o index.html -s slide.css -->
 
-## I. SASS 简介
+## I. 概念的理解
 
-**是 CSS 的扩展，是 CSS 的预处理。提供了许多便利的写法，大大节省了设计者的时间，使得 CSS 的开发，变得简单和可维护。**
+要搞懂移动端的适配问题，就要先搞明白像素和视口。
 
-sass 文件有两种文件名后缀，分别是 .sass 和 .scss，.sass 是严格的嵌套缩进规则，而 .scss 的则是跟写 css 代码类似的大括号，分号这样的语法规则。
+### 像素
 
-CSS 预处理器技术已经非常的成熟，而且也涌现出了很多种不同的 CSS 预处理器语言，比如说：
+在移动端给一个元素设置 width:200px 时发生了什么？这里的 px 到底是多长呢？像素是网页布局的基础，但是我们一直在用直觉使用它。
 
-- Sass（SCSS）
-- LESS
-- Stylus
-- Turbine
-- Swithch CSS
-- CSS Cacheer
-- DT CSS
+iphone6 有 750 的物理像素，但是屏幕宽度像素是 375px？？？
 
-到目前为止，在众多优秀的 CSS 预处理器语言中就属 Sass、LESS 和 Stylus 最优秀，讨论的也多，对比的也多。
+**1.设备像素 device pixel**
+
+设备像素是物理概念，指的是设备中使用的物理像素，任何设备屏幕的物理像素的数量都是固定不变的。
+比如 iphone6 的分辨率 1334 x 750px ，750px 指的是设备物理像素
+
+**2.逻辑像素 css pixel**
+
+css 像素是 web 编程的概念，指的是 css 样式中使用的逻辑像素
+css px 是一个相对单位 相对的是设备像素
+
+---
+
+我们网页 css 和小程序用的是逻辑像素
+
+**eg：**
+iphone6 使用的是 retina 视网膜屏幕
+
+2px x 2px 的设备像素代表 1px z 1px 的 css 像素
+
+所以设备像素 1334 x 750 css 逻辑像素是 667 x 375
+
+那么，我们现在再来说说一个元素 width:200px 以后会怎么样。这个元素跨越了 200 个 CSS 元素，200 个 CSS 元素相当于多少个设备像素取决于两个条件：
+
+- 页面是否缩放
+
+- 屏幕是否为高密度
+
+这两方面后面再解释，先梳理一下手机硬件之间的关系，注意这里使用的都是物理像素。
+
+---
+
+---
+
+## I. 微信小程序
+
+### 微信小程序 rpx
+
+iphone6 有 750 的物理像素，但是屏幕宽度像素是 375px
+
+**设备像素 device pixel**
+
+设备像素是物理概念，指的是设备中使用的物理像素
+比如 iphone6 的分辨率 1334X750px 750px 指的是设备物理像素
+
+**逻辑像素 css pixel**
+
+css 像素是 web 编程的概念，指的是 css 样式中使用的逻辑像素
+css px 是一个相对单位 相对的是设备像素
+
+_我们网页 css 和小程序用的是逻辑像素_
+
+iphone6 使用的是 retina 视网膜屏幕
+
+2px x 2px 的设备像素代表 1px z 1px 的 css 像素
+
+所以设备像素 1334 x 750 css 逻辑像素是 667 x 375
 
 ---
 
@@ -1114,6 +1156,9 @@ npm install --save-dev node-sass
 ---
 
 ## VI. 总结
+
+1. [移动端 Web 页面适配方案](https://segmentfault.com/a/1190000008767416)
+2. [移动端适配方案(上)](https://segmentfault.com/a/1190000004336869)
 
 介绍 SASS
 
