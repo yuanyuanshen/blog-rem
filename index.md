@@ -119,6 +119,8 @@ window.innerWidth/Height 返回视觉视口的尺寸
 
 以 iPhone4S 为例，会在其 320px② 的 visual viewport 上，创建一个宽 980px 的 layout viewport，于是用户可以在 visual viewport 中拖动或者缩放网页，来获得良好的浏览效果；布局视口用来配合 CSS 渲染布局，当我们定义一个容器的宽度为 100%时，这个容器的实际宽度是 980px 而不是 320px，通过这种方式大部分网页就能以缩放的形式正常显示在手机屏幕上了。
 
+---
+
 #### 理想视口（完美视口） ideal viewport
 
 布局视口明显对用户是不友好的，完全忽略了手机本身的尺寸。所以苹果引入了理想视口的概念，它是对设备来说最理想的布局视口尺寸。理想视口中的网页用户最理想的宽度，用户进入页面的时候不需要缩放。
@@ -144,7 +146,7 @@ Screen size tests 和 Understanding viewport 可以测试你的设备的 screen.
 
 缩放是在放大或缩小 CSS 像素，比如一个宽度为 200px 的元素无论放大，还是 200 个 CSS 像素。但是因为这些像素被放大了，所以 CSS 像素也就跨越了更多的设备像素。缩小则相反。
 
-### 缩放与视口
+#### 缩放与视口
 
 **缩放会影响视觉视口的尺寸**
 
@@ -164,6 +166,8 @@ zoom level = screen.width / window.innerWidth
 <meta name="viewport" content="user-scalable=no" />
 ```
 
+---
+
 **设置缩放**
 
 ```html
@@ -171,8 +175,6 @@ zoom level = screen.width / window.innerWidth
 ```
 
 使用 initial-scale 有一个副作用：同时也会将布局视口的尺寸设置为缩放后的尺寸。所以 initial-scale=1 与 width=device-width 的效果是一样的。
-
----
 
 ### 完美视口
 
@@ -187,6 +189,8 @@ zoom level = screen.width / window.innerWidth
 屏幕是否为高密度也会影响设备像素和 CSS 像素的关系。
 
 在缩放程度为 100%（这个条件很重要，在后面会说到）时，他们的比例叫做设备像素比(device pixel ratio)：
+
+---
 
 ```html
 dpr = 设备像素 / CSS 像素
@@ -217,6 +221,8 @@ dpr = 屏幕横向设备像素 / 理想视口的宽
 
 width 被用来定义 layout viewport 的宽度，如果不指定该属性（或者移除 viewport meta 标签），则 layout viewport 宽度为厂商默认值。
 
+---
+
 #### initial-scale
 
 如果想页面默认以某个比例放大或者缩小然后呈现给用户，那么可以通过定义 initial-scale 来完成。
@@ -237,6 +243,8 @@ width 被用来定义 layout viewport 的宽度，如果不指定该属性（或
 
 假设页面的默认缩放值 initial-scale 是 1，那么用户最终能够将页面放大到这个初始页面大小的 5 倍。
 
+---
+
 #### minimum-scale
 
 类似 maximum-scale 的描述，不过 minimum-scale 是用来指定页面缩小比例的。
@@ -250,6 +258,195 @@ width 被用来定义 layout viewport 的宽度，如果不指定该属性（或
 ```html
 <meta name="viewport" content="user-scalable=no" />
 ```
+
+---
+
+## II. 移动端适配方案
+
+- 使用百分比+媒体查询
+
+- 使用 flexbox
+
+- 使用 rem + viewport
+
+- 使用 rem
+
+- 固定布局视口宽度，使用 viewport 进行缩放
+
+---
+
+### rem 是什么
+
+> 相对长度单位，相对于根元素(即 html 元素)font-size 计算值的倍数
+
+**兼容性**
+
+<img src="./rem.png"/>
+
+浏览器默认为 16px 可能造成 rem 计算上的麻烦和多位小数，所以，我们也可以使用 100px 初始化根元素：
+
+<img src="./computed.png" height="220" width="650"/>
+
+---
+
+### 使用百分比+媒体查询
+
+meida queries 的方式可以说是我早期采用的布局方式，它主要是通过查询设备的宽度来执行不同的 css 代码，最终达到界面的配置。核心语法是：
+
+```css
+@media screen and (max-width: 600px) {
+  /*当屏幕尺寸小于600px时，应用下面的CSS样式*/
+  /*你的css代码*/
+}
+```
+
+**优点**
+
+- media query 可以做到设备像素比的判断，方法简单，成本低，特别是对移动和 PC 维护同一套代码的时候。目前像 Bootstrap 等框- 架使用这种方式布局
+- 图片便于修改，只需修改 css 文件
+- 调整屏幕宽度的时候不用刷新页面即可响应式展示
+
+**缺点**
+
+- 代码量比较大，维护不方便
+- 为了兼顾大屏幕或高清设备，会造成其他设备资源浪费，特别是加载图片资源
+- 为了兼顾移动端和 PC 端各自响应式的展示效果，难免会损失各自特有的交互方式
+
+---
+
+### 以天猫首页为代表的 flex 弹性布局[表示怀疑]
+
+它的 viewport 是固定的：
+
+```html
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+/>
+```
+
+高度定死，宽度自适应，元素都采用 px 做单位。
+
+随着屏幕宽度变化，页面也会跟着变化，效果就和 PC 页面的流体布局差不多，在哪个宽度需要调整的时候使用响应式布局调调就行（比如网易新闻），这样就实现了『适配』。
+
+---
+
+### rem + viewport 缩放
+
+这也是淘宝使用的方案，根据屏幕宽度设定 rem 值，需要适配的元素都使用 rem 为单位，不需要适配的元素还是使用 px 为单位。
+
+**实现原理**
+
+如 iphone6 plus 的 dpr 为 3, 则页面整体放大 3 倍, 1px(css 单位)在 plus 下默认为 3px(物理像素)
+然后 viewport 设置为 1/3, 这样页面整体缩回原始大小. 从而实现高清。
+
+这样整个网页在设备内显示时的页面宽度就会等于设备逻辑像素大小，也就是 device-width。 这个 device-width 的计算公式为：设备的物理分辨率/(devicePixelRatio \* scale)， 在 scale 为 1 的情况下，device-width = 设备的物理分辨率/devicePixelRatio 。
+
+当设计以 iphone6 为标准，出 750px 的设计稿时，此时 dpr=2
+
+```javascript
+width = document.documentElement.clientWidth = 375px；
+rem = 375px / 7.5 = 50px; // font-size = 50px
+dpr = 2 时， 1rem = 100px, initial-scale=0.5, 缩放为0.5。
+```
+
+---
+
+### rem 实现
+
+根据不同屏幕动态写入 font-size，以 rem 作为宽度单位，固定布局视口。
+
+```html
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+/>
+```
+
+以 640px 设计稿和 750px 的视觉稿，网易这样处理的：
+
+```javascript
+var width = document.documentElement.clientWidth // 屏幕的布局视口宽度
+var rem = width / 7.5 // 750px设计稿将布局视口分为7.5份
+var rem = width / 6.4 // 640px设计稿将布局视口分为6.4份
+```
+
+在 750px 设计稿上：
+
+```javascript
+//在ipone6上：
+width = document.documentElement.clientWidth = 375px；
+rem = 375px / 7.5 = 50px; // font-size = 50px
+
+//在ipone5上：
+width = document.documentElement.clientWidth = 320px；
+rem = 320px / 7.5 = 42.667px; // font-size = 42.667px;
+```
+
+百分比适配，没有 1px 适配，有字体大小适配。
+
+---
+
+通过以下代码来控制 rem 基准值(设计稿以 720px 宽度量取实际尺寸)
+
+```javascript
+!(function(d) {
+  var c = d.document
+  var a = c.documentElement
+  var b = d.devicePixelRatio
+  var f
+  function e() {
+    var h = a.getBoundingClientRect().width,
+      g
+    if (b === 1) {
+      h = 720
+    }
+    if (h > 720) h = 720 //设置基准值的极限值
+    g = h / 7.2
+    a.style.fontSize = g + 'px'
+  }
+  if (b > 2) {
+    b = 3
+  } else {
+    if (b > 1) {
+      b = 2
+    } else {
+      b = 1
+    }
+  }
+  a.setAttribute('data-dpr', b)
+  d.addEventListener(
+    'resize',
+    function() {
+      clearTimeout(f)
+      f = setTimeout(e, 200)
+    },
+    false
+  )
+  e()
+})(window)
+```
+
+---
+
+### 固定布局视口宽度，使用 viewport 进行缩放
+
+如：荔枝 FM、网易应用
+
+固定布局视口，宽度设置固定的值，总宽度为 640px，根据屏幕宽度动态生成 viewport。（设计稿应该是 640px 的）
+
+```html
+<meta
+  name="viewport"
+  content="width=640, minimum-scale = 0.5625, maximum-scale = 0.5625, target-densitydpi=device-dpi"
+/>
+```
+
+网页宽度始终为 640px。缩放比例 scale 为：
+
+**var scale = window.screen.width / 640**
+
+百分比适配，部分 1px 适配，没有字体适配。
 
 ---
 
@@ -277,20 +474,6 @@ iphone6 使用的是 retina 视网膜屏幕
 
 ---
 
----
-
-## II. SASS 的使用
-
----
-
----
-
----
-
----
-
----
-
 ## III. vue 中引入 sass
 
 ---
@@ -305,5 +488,12 @@ iphone6 使用的是 retina 视网膜屏幕
 6. [移动端适配方案(下)](https://segmentfault.com/a/1190000004358316)
 7. [移动端 H5 页面高清多屏适配方案](http://mobile.51cto.com/web-484304.htm)
 8. [移动前端第一弹：viewport 详解](https://www.cnblogs.com/miragele/p/5449218.html)
+9. [前端移动端适配总结](https://juejin.im/entry/59e70320f265da431c6f6514)
+10. [移动前端自适应适配布局解决方案](https://www.cnblogs.com/Charliexie/p/6900640.html)
+11. [移动端页面适配———多方案解析](https://www.jianshu.com/p/3b45aa981e77)
+12. [移动端适配之 REM](https://www.cnblogs.com/exhuasted/p/6508716.html)
+13. [移动端前端适配方案](https://blog.csdn.net/chenjuan1993/article/details/81710022)
+14. [移动端适配方案一 弹性布局](https://blog.csdn.net/tcf_jingfeng/article/details/80803083)
+15. [移动端适配方案](https://blog.csdn.net/yshenhua/article/details/81036372)
 
 <center>-- End --</center>

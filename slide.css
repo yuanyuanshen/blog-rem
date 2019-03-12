@@ -53,3 +53,14 @@ center {
     text-align: -webkit-center;
     font-weight: 700
 }
+
+th,
+td {
+    border: 1px solid;
+    border-color: grey;
+    padding: 5px 5px;
+}
+
+table {
+    border-collapse: collapse;
+}
