@@ -78,7 +78,7 @@ table {
 
 移动端 Web 页面，即常说的 H5 页面、手机页面、webview 页面等。
 
-机设备屏幕尺寸不一，做移动端的 Web 页面，需要考虑在安卓/IOS 的各种尺寸设备上的兼容，这里总结的是针对移动端设备的页面，设计与前端实现怎样做能更好地适配不同屏幕宽度的移动设备。
+手机机设备屏幕尺寸不一，做移动端的 Web 页面，需要考虑在安卓/IOS 的各种尺寸设备上的兼容，这里总结的是针对移动端设备的页面，设计与前端实现怎样做能更好地适配不同屏幕宽度的移动设备。
 
 **适配的目标**
 
@@ -465,6 +465,11 @@ rem = 320px / 7.5 = 42.667px; // font-size = 42.667px;
 
 通过以下代码来控制 rem 基准值(设计稿以 720px 宽度量取实际尺寸)
 
+- [documentElement](https://developer.mozilla.org/zh-CN/docs/Web/API/Document/documentElement)
+- [devicePixelRatio](https://www.w3cschool.cn/fetch_api/fetch_api-atvq2nma.html)
+
+---
+
 ```javascript
 !(function(d) {
   var c = d.document
@@ -526,35 +531,258 @@ rem = 320px / 7.5 = 42.667px; // font-size = 42.667px;
 
 ---
 
-### 微信小程序 rpx
+### 微信新增尺寸单位 [rpx](https://developers.weixin.qq.com/miniprogram/dev/framework/view/wxss.html)
 
-iphone6 有 750 的物理像素，但是屏幕宽度像素是 375px
+新增了尺寸单位。在写 CSS 样式时，开发者需要考虑到手机设备的屏幕会有不同的宽度和设备像素比，采用一些技巧来换算一些像素单位。WXSS 在底层支持新的尺寸单位 rpx ，开发者可以免去换算的烦恼，只要交给小程序底层来换算即可，由于换算采用的浮点数运算，所以运算结果会和预期结果有一点点偏差。
 
-**设备像素 device pixel**
+> rpx（responsive pixel）: 可以根据屏幕宽度进行自适应。规定屏幕宽为 750rpx。如在 iPhone6 上，屏幕宽度为 375px，共有 750 个物理像素，则 750rpx = 375px = 750 物理像素，1rpx = 0.5px = 1 物理像素。
 
-设备像素是物理概念，指的是设备中使用的物理像素
-比如 iphone6 的分辨率 1334X750px 750px 指的是设备物理像素
+| 设备     | 物理像素 | css 像素 | rpx->px        | px->rpx       |
+| -------- | -------- | -------- | -------------- | ------------- |
+| iPhone5  | 320px    | 320px    | 1rpx = 0.42px  | 1px = 2.34rpx |
+| iPhone6  | 750px    | 375px    | 1rpx = 0.5px   | 1px = 2rpx    |
+| iPhone6+ | 1080px   | 414px    | 1rpx = 0.552px | 1px = 1.81rpx |
 
-**逻辑像素 css pixel**
-
-css 像素是 web 编程的概念，指的是 css 样式中使用的逻辑像素
-css px 是一个相对单位 相对的是设备像素
-
-_我们网页 css 和小程序用的是逻辑像素_
-
-iphone6 使用的是 retina 视网膜屏幕
-
-2px x 2px 的设备像素代表 1px z 1px 的 css 像素
-
-所以设备像素 1334 x 750 css 逻辑像素是 667 x 375
+建议： 开发微信小程序时设计师可以用 iPhone6 作为视觉稿的标准。
 
 ---
 
-## III. vue 中引入 sass
+## III. 响应式和自适应
+
+自适应是最早出现的，后面才有了响应式。响应式布局等于流动网格布局，而自适应布局等于使用固定分割点来进行布局。
+
+**响应式的基本概念是（Responsive design）：**
+
+简而言之，就是一个网站能够兼容多个终端——而不是为每个终端做一个特定的版本。
+
+**自适应的解释（Adaptive design）：**
+
+自适应布局给了你更多设计的空间，因为你只用考虑几种不同的状态。
+
+如果用响应式布局来处理的话，用不同设备（电脑、平板、手机）去访问此页面，最后看到的布局和内容有很大不同。而如果用自适应布局去处理的话，那不管访问设备如何的不同（下图是三台尺寸不一样的手机），最后看到的页面内容和布局基本上还是一样的，就是尺寸略有不同。
 
 ---
 
-## VI. 总结
+**响应式**
+
+- [京东云官网](https://www.jdcloud.com/cn/) (栅格系统 + 媒体查询)
+
+pro-list-hd hidden-xs
+
+- [Microsoft](https://www.microsoft.com/zh-cn/) (栅格系统 + 媒体查询)
+
+col-6 pad-6x
+
+- [华为](/www.huaweicloud.com) (栅格系统 + 媒体查询 )
+
+col-sm-4 col-pd-12 col-mb-12
+
+**自适应**
+
+- [携程](https://www.ctrip.com/)
+- [淘宝](https://world.taobao.com/?spm=a21wu.241046-cn.7607074463.1.4a36b6cb14epyS&pos=1&acm=lb-zebra-243267-2087055.1003.1.1861105_0&scm=1003.1.lb-zebra-243267-2087055.OTHER_14955595025821_1861105)
+
+---
+
+### 实现响应式有哪几种方式?
+
+#### 1.使用媒体查询(Media Query) 结合 rem 字体
+
+```css
+// 如果大于1000px，就用：对应PC端页面
+@media screen and (min-width: 1000px) {
+  ...;
+}
+// 如果在小于1000px和大于768px之间： 对应平板端页面
+@media screen and (max-width: 1000px) and (min-width: 768px) {
+  ...;
+}
+// 如果小于768px：  对应手机端页面
+@media screen and (max-width: 768px) {
+  ...;
+}
+```
+
+#### 2.使用插件[bootstrap](https://v3.bootcss.com/css/#grid)
+
+栅格化布局，本例利用 bootstarp 的栅格系统
+
+---
+
+<img src="./sgxt.png" />
+<img src="./sg.png" />
+
+---
+
+<img src="./768.png" height="170"/>
+<img src="./769.png" height="170"/>
+<img src="./992.png" height="170"/>
+
+---
+
+#### 3.使用弹性布局(flex)
+
+[flex](http://www.runoob.com/w3cnote/flex-grammar.html)
+
+---
+
+## VI. 移动端适配总结
+
+- 1 像素边框高清
+
+- 高清图问题
+
+---
+
+### 1 像素边框高清
+
+在移动端 web 开发中，UI 设计稿中设置边框为 1 像素，前端在开发过程中如果出现 border:1px，测试会发现在某些机型上，1px 会比较粗，即是较经典的移动端 1px 像素问题。
+
+- 项目中引入：border-1px.css，然后通过控制元素的 before 和 after 伪元素，改变 border 大小或颜色。
+- 上面说到的淘宝的实现方式即 rem+viewport 缩放来实现。
+
+```css
+div {
+  width: 1px;
+  height: 100%;
+  display: block;
+  border-left: 1px solid #e5e5e5;
+  -webkit-transform: scale(0.5);
+  transform: scaleX(0.5);
+}
+```
+
+缺点：
+
+圆角无法实现，实现 4 条边框比较麻烦，并且只能单独实现，如果嵌套，会对包含的效果产生不想要的效果，所以此方案配合:after 和 before 独立使用较多。
+
+---
+
+- box-shadow
+
+利用 CSS 对阴影处理的方式实现 0.5px 的效果
+
+```css
+-webkit-box-shadow: 0 1px 1px -1px rgba(0, 0, 0, 0.5);
+```
+
+优点：
+
+基本所有场景都能满足，包含圆角的 button，单条，多条线。
+
+缺点：
+
+颜色不好处理， 黑色 rgba(0,0,0,1) 最深的情况了。有阴影出现，不好用。
+大量使用 box-shadow 可能会导致性能瓶颈。
+四条边框实现效果不理想。
+
+---
+
+- 图片实现
+
+使用 background-image 实现 1px 有两种方式: 渐变 linear-gradient 或直接使用图片(base64)。
+渐变 linear-gradient (50%有颜色，50%透明)
+
+单线条
+
+```css
+div {
+  height: 1px;
+  background-image: -webkit-linear-gradient(top, transparent 50%, #000 50%);
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+}
+```
+
+优点: 可以设置单条,多条边框 可以设置颜色
+
+缺点: 大量使用渐变可能导致性能瓶颈 代码量大 多背景图片有兼容性问题
+
+---
+
+### 高清图问题
+
+**1. 使用 [srcset](https://www.cnblogs.com/flicat/p/4381089.html) 标签（WebKit 最新特性 srcset 简介）**
+
+```html
+<img
+  src="http://g.ald.alicdn.com/bao/uploaded/i1/TB1d6QqGpXXXXbKXXXXXXXXXXXX_!!0-item_pic.jpg_160x160q90.jpg"
+  srcset="
+    http://img01.taobaocdn.com/imgextra/i1/803091114/TB2XhAPaVXXXXXmXXXXXXXXXXXX_!!803091114.jpg 2x,
+    http://gtms04.alicdn.com/tps/i4/TB1wDjWGXXXXXbtXVXX6Cwu2XXX-398-510.jpg_q75.jpg              3x
+  "
+/>
+```
+
+**2. 使用 js 自带的 Image 异步加载图片**
+
+```html
+<img
+  id="img"
+  data-src1x="xxx@1x.jpg"
+  data-src2x="xxx@2x.jpg"
+  data-src3x="xxx@3x.jpg"
+/>
+```
+
+---
+
+```javascript
+var dpr = window.devicePixelRatio
+if (dpr > 3) {
+  dpr = 3
+}
+var imgSrc = $('#img').data('src' + dpr + 'x')
+var img = new Image()
+img.src = imgSrc
+img.onload = function(imgObj) {
+  $('#img')
+    .remove()
+    .prepend(imgObj) //替换img对象
+}
+```
+
+**3. 背景图片高清解决方法（对于 dpr=2，1 个 css 像素对应 4 个物理像素）**
+
+对于 dpr=1，物理像素和 css 相同，图片高清。但对于 dpr=2，导致每个像素点实际上有 4 倍的普通像素点，反过来说，一个 CSS 像素点实际分成了四个，这样就造成了颜色只能近似选取，于是，我们看上去就变得模糊了。所以使用 2x 的图片就刚刚好。
+
+---
+
+使用 media 来处理
+
+```css
+/* 普通显示屏(设备像素比例小于等于1)使用1倍的图 */
+.css {
+  background-image: url(img_1x.png);
+}
+/* 高清显示屏(设备像素比例大于等于2)使用2倍图  */
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+  .css {
+    background-image: url(img_2x.png);
+  }
+}
+```
+
+使用 [image-set]() 来处理
+
+https://www.html.cn/book/css/values/image/image-set().htm
+
+```css
+.css {
+  background-image: url(1x.png); /*不支持image-set的情况下显示*/
+  background: -webkit-image-set(
+    url(1x.png) 1x,
+    /* 支持image-set的浏览器的[普通屏幕]下 */ url(2x.png) 2x,
+    /* 支持image-set的浏览器的[2倍Retina屏幕] */ url(3x.png) 3x
+      /* 支持image-set的浏览器的[3倍Retina屏幕] */
+  );
+}
+```
+
+---
+
+## IV. 总结
 
 1. [移动端 Web 页面适配方案](https://segmentfault.com/a/1190000008767416)
 2. [移动端适配方案(上)](https://segmentfault.com/a/1190000004336869)
@@ -571,6 +799,8 @@ iphone6 使用的是 retina 视网膜屏幕
 13. [移动端前端适配方案](https://blog.csdn.net/chenjuan1993/article/details/81710022)
 14. [移动端适配方案一 弹性布局](https://blog.csdn.net/tcf_jingfeng/article/details/80803083)
 15. [移动端适配方案](https://blog.csdn.net/yshenhua/article/details/81036372)
+16. [移动端 1 像素边框问题的解决方案](https://www.cnblogs.com/cckui/p/9267534.html)
+17. [移动端适配问题](https://www.cnblogs.com/luguiqing/p/7910686.html)
 
 <center>-- End --</center>
 
