@@ -6,6 +6,10 @@ body {
     padding: 0 0;
 }
 
+html {
+    font-size: 100px;
+}
+
 @font-face {
     font-family: wawaFont;
     src: url('../lib/wawa.TTF');
@@ -31,16 +35,29 @@ body {
 }
 
 .person {
-    width: 100%;
-    height: 40%;
+    width: 3.2rem;
+    height: 2.27rem;
     text-align: center;
     position: relative;
 }
 
 .person img {
-    height: 240%;
-    width: 100%;
+    height: 5.4rem;
+    width: 3.2rem;
 }
+
+span.question {
+    position: absolute;
+    bottom: 0.1rem;
+    width: 2.12rem;
+    left: 0.6rem;
+    font-size: 0.19rem;
+    color: white;
+    font-family: wawaFont;
+}
+
+
+/* ************************************** 以上已改 */
 
 .bottom {
     width: 100%;
@@ -75,4 +92,69 @@ img.begin {
     height: 10%;
     bottom: 8%;
     left: 32%;
+}
+
+.center {
+    width: 100%;
+    height: 50%;
+    text-align: center;
+    position: relative;
+}
+
+.center img.pop {
+    width: 86%;
+    height: 90%;
+    text-align: center;
+    margin-top: 10%;
+}
+
+.center img.next {
+    width: 26%;
+    position: absolute;
+    bottom: -6%;
+    left: 37%;
+    /*height: 20%;*/
+}
+
+.bottom {
+    width: 100%;
+    height: 10%;
+    position: absolute;
+    bottom: -2%;
+}
+
+.bottom img {
+    width: 100%;
+    height: 80%;
+}
+
+.bottom-text {
+    width: 100%;
+    position: absolute;
+    bottom: 5px;
+    text-align: center;
+    font-family: wawaFont;
+}
+
+.msg {
+    color: red !important;
+}
+
+.answer {
+    position: absolute;
+    top: 32%;
+    width: 72%;
+    left: 14%;
+    font-size: 100%;
+    height: 54%;
+    font-family: wawaFont;
+    font-weight: bold;
+}
+
+.answer span {
+    display: block;
+    text-align: left;
+    padding: 4% 0%;
+    border-bottom: 2px dashed black;
+    color: #bf2b2b;
 }
