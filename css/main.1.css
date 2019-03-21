@@ -1,0 +1,78 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+@font-face {
+    font-family: wawaFont;
+    src: url('../lib/wawa.TTF');
+}
+
+.swiper-slide {
+    background: rgba(51, 169, 230, 1);
+}
+
+.container {
+    position: relative;
+}
+
+.home {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.home img {
+    width: 100%;
+    height: 100%;
+}
+
+.person {
+    width: 100%;
+    height: 40%;
+    text-align: center;
+    position: relative;
+}
+
+.person img {
+    height: 240%;
+    width: 100%;
+}
+
+.bottom {
+    width: 100%;
+    height: 10%;
+    position: absolute;
+    bottom: -2%;
+}
+
+.bottom img {
+    width: 100%;
+    height: 80%;
+}
+
+.bottom-text {
+    width: 100%;
+    position: absolute;
+    bottom: 5px;
+    text-align: center;
+    font-family: wawaFont;
+}
+
+.center {
+    width: 100%;
+    height: 50%;
+    text-align: center;
+    position: relative;
+}
+
+img.begin {
+    position: absolute;
+    width: 36%;
+    height: 10%;
+    bottom: 8%;
+    left: 32%;
+}
