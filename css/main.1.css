@@ -1,3 +1,5 @@
+/* 4.使用 rem */
+
 html,
 body {
     height: 100%;
@@ -36,13 +38,13 @@ html {
 
 .person {
     width: 3.2rem;
-    height: 2.27rem;
+    height: 40%;
     text-align: center;
     position: relative;
 }
 
 .person img {
-    height: 5.4rem;
+    height: 240%;
     width: 3.2rem;
 }
 
@@ -51,7 +53,7 @@ span.question {
     bottom: 0.1rem;
     width: 2.12rem;
     left: 0.6rem;
-    font-size: 0.19rem;
+    font-size: 0.18rem;
     color: white;
     font-family: wawaFont;
 }
@@ -145,7 +147,7 @@ img.begin {
     top: 32%;
     width: 72%;
     left: 14%;
-    font-size: 100%;
+    font-size: 0.18rem;
     height: 54%;
     font-family: wawaFont;
     font-weight: bold;
