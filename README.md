@@ -72,6 +72,7 @@ ppi 是可以通过 分辨率 和 屏幕尺寸 计算得到的：
 <img src="./ppi.png"/>
 
 [这个网站](https://www.sven.de/dpi/)列出了很多设备的分辨率和屏幕尺寸，并且计算了 ppi。
+[这个网站](https://material.io/tools/devices/)列出了很多设备的分辨率和屏幕尺寸，并且计算了 ppi。
 
 ---
 
@@ -263,15 +264,20 @@ width 被用来定义 layout viewport 的宽度，如果不指定该属性（或
 
 ## II. 移动端适配方案
 
-- 使用百分比+媒体查询
+- 1.使用百分比+媒体查询 [test.1.html](./test.1.html)
 
-- 使用 flexbox
+- 2.使用 flexbox
 
-- 使用 rem + viewport
+- 3.使用 rem + viewport [test.3.html](./test.1.html)
 
-- 使用 rem
+- 4.使用 rem [test.4.html](./test.1.html)
 
-- 固定布局视口宽度，使用 viewport 进行缩放
+- 5.固定布局视口宽度，使用 viewport 进行缩放 [test.5.html](./test.1.html)
+
+---
+
+在 iphone6p 下 test.1.html 和 test.3.html 适配对比
+<img src="./iphone6p1-3.png"/>
 
 ---
 
@@ -289,7 +295,7 @@ width 被用来定义 layout viewport 的宽度，如果不指定该属性（或
 
 ---
 
-### 使用百分比+媒体查询
+### 1.使用百分比+媒体查询
 
 meida queries 的方式可以说是我早期采用的布局方式，它主要是通过查询设备的宽度来执行不同的 css 代码，最终达到界面的配置。核心语法是：
 
@@ -314,7 +320,7 @@ meida queries 的方式可以说是我早期采用的布局方式，它主要是
 
 ---
 
-### 以天猫首页为代表的 flex 弹性布局[表示怀疑]
+### 2.以天猫首页为代表的 flex 弹性布局[表示怀疑]
 
 它的 viewport 是固定的：
 
@@ -331,7 +337,7 @@ meida queries 的方式可以说是我早期采用的布局方式，它主要是
 
 ---
 
-### rem + viewport 缩放
+### 3.rem + viewport 缩放
 
 这也是淘宝使用的方案，根据屏幕宽度设定 rem 值，需要适配的元素都使用 rem 为单位，不需要适配的元素还是使用 px 为单位。
 
@@ -352,7 +358,7 @@ dpr = 2 时， 1rem = 100px, initial-scale=0.5, 缩放为0.5。
 
 ---
 
-### rem 实现
+### 4.rem 实现
 
 根据不同屏幕动态写入 font-size，以 rem 作为宽度单位，固定布局视口。
 
@@ -434,7 +440,7 @@ rem = 320px / 7.5 = 42.667px; // font-size = 42.667px;
 
 ---
 
-### 固定布局视口宽度，使用 viewport 进行缩放
+### 5.固定布局视口宽度，使用 viewport 进行缩放
 
 如：荔枝 FM、网易应用
 
