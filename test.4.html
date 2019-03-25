@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- 4.rem 实现 -->
 
 <head>
     <meta charset="UTF-8">
@@ -7,7 +8,7 @@
     <script src="./lib/jquery-3.1.1.min.js"></script>
     <script src="./lib/swiper-3.4.1.min.js"></script>
     <link rel="stylesheet" href="./lib/swiper-3.4.1.min.css" type="text/css">
-    <link rel="stylesheet" href="./css/main.css" type="text/css">
+    <link rel="stylesheet" href="./css/main.1.css" type="text/css">
     <title>国航安全文化知识竞赛</title>
 </head>
 
@@ -44,6 +45,41 @@
         </div>
 
         <script>
+            var c = window.document
+            var a = c.documentElement
+            var b = window.devicePixelRatio
+            var f
+
+            function e() {
+                var h = a.getBoundingClientRect().width,
+                    g
+                if (b === 1) {
+                    h = 320
+                }
+                if (h > 768) h = 768 //设置基准值的极限值
+                g = h / 3.2
+                a.style.fontSize = g + 'px'
+            }
+            if (b > 2) {
+                b = 3
+            } else {
+                if (b > 1) {
+                    b = 2
+                } else {
+                    b = 1
+                }
+            }
+            a.setAttribute('data-dpr', b)
+            window.addEventListener(
+                'resize',
+                function() {
+                    clearTimeout(f)
+                    f = setTimeout(e, 200)
+                },
+                false
+            )
+            e()
+
             var answer = [];
             var index = '';
             $(".answer_item").click(function() {

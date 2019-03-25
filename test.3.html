@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- 3.rem + viewport 缩放 -->
 
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0,maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0,maximum-scale=1, user-scalable=no" name="viewport"> -->
     <script src="./lib/jquery-3.1.1.min.js"></script>
     <script src="./lib/swiper-3.4.1.min.js"></script>
     <link rel="stylesheet" href="./lib/swiper-3.4.1.min.css" type="text/css">
-    <link rel="stylesheet" href="./css/main.css" type="text/css">
+    <link rel="stylesheet" href="./css/main.1.css" type="text/css">
     <title>国航安全文化知识竞赛</title>
 </head>
 
@@ -44,6 +45,51 @@
         </div>
 
         <script>
+            var c = window.document
+            var a = c.documentElement
+            var metaEl = c.getElementsByTagName('meta')[1]
+            var b = window.devicePixelRatio
+            var myScale = 1 / b
+            var tid;
+            var f
+
+            var h = a.getBoundingClientRect().width,
+                g
+
+            // metaEl.setAttribute('content', 'initial-scale=' + myScale + ', maximum-scale=' + myScale + ', minimum-scale=' + myScale + ', user-scalable=no');
+            a.setAttribute('data-dpr', b)
+
+            if (!metaEl) {
+                metaEl = c.createElement('meta');
+                metaEl.setAttribute('name', 'viewport');
+                metaEl.setAttribute('content', 'initial-scale=' + myScale + ', maximum-scale=' + myScale + ', minimum-scale=' + myScale + ', user-scalable=no');
+                if (a.firstElementChild) {
+                    a.firstElementChild.appendChild(metaEl);
+                } else {
+                    var wrap = c.createElement('div');
+                    wrap.appendChild(metaEl);
+                    c.write(wrap.innerHTML);
+                }
+            }
+
+            function refreshRem() {
+                var width = a.getBoundingClientRect().width;
+                width = width / b
+                if (b === 1) {
+                    width = 320
+                }
+                if (width > 768) h = 768 //设置基准值的极限值
+                g = width / 3.2
+                a.style.fontSize = g * b + 'px'
+            }
+
+            window.addEventListener('resize', function() {
+                clearTimeout(tid);
+                tid = setTimeout(refreshRem, 200);
+            }, false);
+
+            refreshRem()
+
             var answer = [];
             var index = '';
             $(".answer_item").click(function() {

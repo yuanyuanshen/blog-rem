@@ -72,6 +72,7 @@ ppi 是可以通过 分辨率 和 屏幕尺寸 计算得到的：
 <img src="./ppi.png"/>
 
 [这个网站](https://www.sven.de/dpi/)列出了很多设备的分辨率和屏幕尺寸，并且计算了 ppi。
+[这个网站](https://material.io/tools/devices/)列出了很多设备的分辨率和屏幕尺寸，并且计算了 ppi。
 
 ---
 
@@ -263,15 +264,20 @@ width 被用来定义 layout viewport 的宽度，如果不指定该属性（或
 
 ## II. 移动端适配方案
 
-- 1.使用百分比+媒体查询
+- 1.使用百分比+媒体查询 [test.1.html](./test.1.html)
 
 - 2.使用 flexbox
 
-- 3.使用 rem + viewport
+- 3.使用 rem + viewport [test.3.html](./test.1.html)
 
-- 4.使用 rem
+- 4.使用 rem [test.4.html](./test.1.html)
 
-- 5.固定布局视口宽度，使用 viewport 进行缩放
+- 5.固定布局视口宽度，使用 viewport 进行缩放 [test.5.html](./test.1.html)
+
+---
+
+在 iphone6p 下 test.1.html 和 test.3.html 适配对比
+<img src="./iphone6p1-3.png"/>
 
 ---
 

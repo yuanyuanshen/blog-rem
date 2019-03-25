@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- 5.固定布局视口宽度，使用 viewport 进行缩放 -->
 
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0,maximum-scale=1, user-scalable=no" name="viewport">
+    <meta content="width=320, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0,maximum-scale=1, user-scalable=no" name="viewport">
     <script src="./lib/jquery-3.1.1.min.js"></script>
     <script src="./lib/swiper-3.4.1.min.js"></script>
     <link rel="stylesheet" href="./lib/swiper-3.4.1.min.css" type="text/css">
@@ -44,6 +45,29 @@
         </div>
 
         <script>
+            var c = window.document
+            var a = c.documentElement
+            var metaEl = c.getElementsByTagName('meta')[1]
+            var b = window.devicePixelRatio
+            var myScale = 1 / b
+            var tid;
+
+            // 固定屏幕宽度等比例缩放
+            function refreshScale() {
+                var myScale = window.screen.width / 320
+                metaEl.setAttribute('content', 'initial-scale=' + myScale + ', maximum-scale=' + myScale + ', minimum-scale=' + myScale + ', user-scalable=no');
+            }
+
+            var h = a.getBoundingClientRect().width
+            a.setAttribute('data-dpr', b)
+
+            window.addEventListener('resize', function() {
+                clearTimeout(tid);
+                tid = setTimeout(refreshScale, 200);
+            }, false);
+
+            refreshScale()
+
             var answer = [];
             var index = '';
             $(".answer_item").click(function() {
